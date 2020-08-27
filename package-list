@@ -1,0 +1,6 @@
+com.schibsted.account
+com.schibsted.account.introspection
+com.schibsted.account.nimbus
+com.schibsted.account.token
+com.schibsted.account.token.verifier
+com.schibsted.account.util
