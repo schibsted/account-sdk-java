@@ -1,0 +1,9 @@
+<!--
+  ~ Copyright (c) 2020 Schibsted Media Group.
+  ~ Licensed under the terms of the MIT license. See LICENSE in the project root.
+  -->
+
+<configuration>
+    <!--Enable all logging-->
+    <root level="trace"></root>
+</configuration>

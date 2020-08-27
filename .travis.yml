@@ -1,0 +1,42 @@
+dist: bionic
+language: java
+jdk:
+  - openjdk8
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+env:
+  global:
+    - BINTRAY_USER=schibstedaccount
+    # Encrypted BINTRAY_API_KEY
+    - secure: "QtLpfTTPAh+QFPOdjE7Rs3XglFRjLv1577wPWusJcVKkqF7aRWPurI6CBY/RThB7iHjBpPMGb0RZSaqMd3e0+FO7SKhvihJGm45zoTAvqqSu6j1tJJmGNjShRYjIkfDpvLUAcPUCftkF7pEvVQlcNIBdrLQw3BMcN60gOPPq+zEBaqrlVoNl+s1mjhxoVvut8D0F3jUXsAY+CfJL0K/wqlPfprBfxXQdT72RiycSb0wnOe3+MJw6J6L3jvaL8hJ4A6LDpR7BR6lNhsMMv6KCmE6pxcecY+DDv6/hjkqg1wg5MJfnUP0KI6do7uKzti6ap4n6UcBvq2jqqWZqaAEC1x2bNVcUa+yR8TUkNAXRD8H5HD5FCRkIHhmGWoIvVqq4IKN9A+G1xBr0xjvG0EP27YdoF2G3HbJmPoyvRhctk5yQqxsoJLpmCnDqA7EyghXljRLWqAF3Y78/CACafWR2TbW+g337ju2guKO23KEgBl57YWaECXOsh0FEgry+QxC9GUVSuRIzxfdXUmTNPC5zMavPI4E1l3PDPJIqZNFPEoLQVBbyO4ccADZPI5LwGowMP4+o36sV28PZdFsj7fyZdKI7w62WjLNoOUejGHL9hJ0Qg/nLW+ygVikVACukhFZ/WMuPD7eg6swxNWMjYee0sTvz1ycyWOuHJM2s9TtLMbc="
+    # Encrypted GH_PAGES_TOKEN
+    - secure: "ENw/HcUGIy/XUnwTPobm/pH0P1Kzls2+qGHqpuTiM+C9RuZ5FY544eJXo+qS972+yJMSAuFxr31u212WlYtWc7gFht5u+qpPIMe9dFvk0vgV+oIUnvS5fB7eKiiayqO4lxKcVYObf3O+HpXXnUAmQWhyXkyXvmfQWwgNgT1Y9gVqY+tJCmDoqmL6Hc15I/IYKhhL+JM0H8LxmiI/iXoUsdWe1Un2PXWE9dQGbRBifprLVvmDC0SlYS5liDwjINGPi49fvdci4kNNOiTQEQlXuLrC6ygBHVDCw9QxWupOLny6LfDqxYlT8eW/CfD2Z27ebPHSe/0Boqc66Fixw8I1k1ABEFK4HAQ7lZ26zwYBUkoKL01hW/Tdm4gjoysnUD/VEzAD5ieIyJo6vd+zGmMxhqlWKkaNV+jfbr6fa3tVeDkv0/hBLg7wCV5SpwgYBwhsJmOQer/cRduI+RIynxHY7kAJifRHEeteDc6x6HnmrmmoUnflsWt9V2uw0CWR7gbdD0qJJx4SHm18yFdMeel5x9TjVLYWL1IOU+1oJWUtyOavqjU+6OT/SHQ7eA7E4PjnWIJj5QLsusnABtAIY7MeXE72JsWmoAZPtggSz05qn/sESboYMOmQB5BlGcgR7B3Dk5ZmHsg8diOJVc3R41wh15gfve0sj/j7vZ+ifmnPYc8="
+
+script:
+  - ./gradlew clean build
+
+before_deploy: ./gradlew javadoc
+
+deploy:
+  - provider: script
+    script: ./gradlew bintrayUpload
+    skip_cleanup: true
+    on:
+      repo: schibsted/account-sdk-java
+      tags: true
+
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GH_PAGES_TOKEN
+    keep_history: true
+    local_dir: build/docs/javadoc/
+    on:
+      repo: schibsted/account-sdk-java
+      tags: true
