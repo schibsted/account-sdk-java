@@ -1,7 +1,8 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.8.5'
+    id 'signing'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 }
 
 version '1.0.0'
@@ -9,7 +10,6 @@ group 'com.schibsted.account'
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
@@ -39,29 +39,46 @@ test {
 
 publishing {
     publications {
-        AccountSdkJava(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
+
+            pom {
+                name = 'Schibsted account SDK Java'
+                packaging = 'jar'
+                description = "Schibsted account Java SDK ${project.version}"
+                url = 'https://github.com/schibsted/account-sdk-java'
+
+                scm {
+                    connection = 'scm:git:https://github.com/schibsted/account-sdk-java.git'
+                    url = 'https://github.com/schibsted/account-sdk-java'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'schibsted-account'
+                        name = 'Schibsted account team'
+                        email = 'schibstedaccount@schibsted.com'
+                    }
+                }
+            }
         }
     }
 }
 
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_API_KEY')
-    publications = ['AccountSdkJava']
-
-    pkg {
-        repo = 'maven'
-        name = 'account-sdk-java'
-        userOrg = 'schibsted-account'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
-        publish = true
-
-        version {
-            name = project.version.toString()
-            desc = "Schibsted account Java SDK ${project.version}"
-            released = new Date()
-        }
+nexusPublishing {
+    repositories {
+        sonatype()
     }
+}
+
+signing {
+    useInMemoryPgpKeys(new String(System.getenv('SIGNING_KEY').decodeBase64()), System.getenv('SIGNING_PASSWORD'))
+    sign publishing.publications.mavenJava
 }
