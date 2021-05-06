@@ -1,11 +1,10 @@
 # account-sdk-java
 [![Build Status](https://travis-ci.com/schibsted/account-sdk-java.svg?branch=master)](https://travis-ci.com/schibsted/account-sdk-java)
-[![Download](https://api.bintray.com/packages/schibsted-account/maven/account-sdk-java/images/download.svg)](https://bintray.com/schibsted-account/maven/account-sdk-java/_latestVersion)
 
 Java SDK for Schibsted account
 
 ## Downloading
-The SDK is [published on JCenter](https://bintray.com/schibsted-account/maven/account-sdk-java) and available via for
+The SDK is [published on Maven Central](https://search.maven.org/artifact/com.schibsted.account/account-sdk-java) and available via for
 example Gradle: `implementation 'com.schibsted.account:account-sdk-java:<version>'`.
 
 ## Usage
