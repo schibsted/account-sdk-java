@@ -14,6 +14,7 @@ import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
 import com.nimbusds.openid.connect.sdk.Nonce;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
+import com.nimbusds.openid.connect.sdk.claims.ACR;
 import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 import com.schibsted.account.introspection.*;
 import com.schibsted.account.nimbus.HTTPException;
@@ -48,7 +49,9 @@ public class AuthClient {
         new AbstractMap.SimpleEntry<>(Environment.DEV, URI.create("https://identity-dev.schibsted.com")),
         new AbstractMap.SimpleEntry<>(Environment.PRE, URI.create("https://identity-pre.schibsted.com")),
         new AbstractMap.SimpleEntry<>(Environment.PRO, URI.create("https://login.schibsted.com")),
-        new AbstractMap.SimpleEntry<>(Environment.PRO_NO, URI.create("https://payment.schibsted.no"))
+        new AbstractMap.SimpleEntry<>(Environment.PRO_NO, URI.create("https://payment.schibsted.no")),
+        new AbstractMap.SimpleEntry<>(Environment.PRO_FI, URI.create("https://login.schibsted.fi")),
+        new AbstractMap.SimpleEntry<>(Environment.PRO_DK, URI.create("https://login.schibsted.dk"))
         ).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
     );
 
@@ -133,7 +136,7 @@ public class AuthClient {
      *
      * @param authCode      issued OAuth authorization code to exchange for tokens
      * @param redirectURI   client redirect URI associated with the authorization code (specified in the authentication
-     *                      request, see {@link AuthClient#getLoginURL(URI, String, String, Collection)})
+     *                      request, see {@link AuthClient#getLoginURL(URI, String, String, Collection, Collection)})
      * @param expectedNonce the nonce associated with the authorization code (specified in the authentication request)
      * @return the issued user tokens
      * @throws AccountSDKException if no tokens could be obtained
@@ -179,11 +182,34 @@ public class AuthClient {
      * @param nonce       opaque value to associate a session with the ID Token that will be issued on successful
      *                    user authentication
      * @param scopes      requested scope, must contain the {@code "openid"} value
+     *
      * @return the URL to redirect the user to for authentication
      * @see <a href="https://techdocs.login.schibsted.com/oauth/authorize/">User login</a>
      * @see <a href="http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">OpenID Connect Authentication Request</a>
      */
     public URI getLoginURL(URI redirectUri, String state, String nonce, Collection<String> scopes) {
+        return getLoginURL(redirectUri, state, nonce, scopes, null);
+    }
+
+    /**
+     * Creates the login URL to redirect the user to, making an OpenID Connect authentication request.
+     *
+     * @param redirectUri URL (that must be pre-registered for the client) to which the response will be sent
+     *                    after the user authentication is completed
+     * @param state       opaque value to maintain state between the request and the response delivered to the
+     *                    {@code redirectURI}. This should be verified upon receiving the response, to prevent
+     *                    Cross-Site Request Forgery.
+     * @param nonce       opaque value to associate a session with the ID Token that will be issued on successful
+     *                    user authentication
+     * @param scopes      requested scope, must contain the {@code "openid"} value
+     * @param acrValues   Optional field to request certain authentication methods. Possible values: {@code pwd},
+     *                    {@code sms}, {@code otp}
+     * @return the URL to redirect the user to for authentication
+     * @see <a href="https://techdocs.login.schibsted.com/oauth/authorize/">User login</a>
+     * @see <a href="http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">OpenID Connect Authentication Request</a>
+     * @see <a href="https://openid.net/specs/openid-connect-core-1_0.html#acrSemantics">Requesting the "acr" Claim</a>
+     */
+    public URI getLoginURL(URI redirectUri, String state, String nonce, Collection<String> scopes, Collection<ACR> acrValues) {
         if (redirectUri == null) {
             throw new IllegalArgumentException("redirectUri may not be null");
         }
@@ -197,6 +223,9 @@ public class AuthClient {
             throw new IllegalArgumentException("scopes may not be null or empty");
         }
 
+        List<ACR> acrParams = (acrValues != null) ?
+            acrValues.stream().collect(Collectors.toList()) : null;
+
         AuthenticationRequest authReq = new AuthenticationRequest.Builder(
             new ResponseType(ResponseType.Value.CODE),
             Scope.parse(scopes),
@@ -206,6 +235,7 @@ public class AuthClient {
             .endpointURI(this.serverAddress.resolve(OAUTH_AUTHENTICATION_ENDPOINT))
             .state(new State(state))
             .nonce(new Nonce(nonce))
+            .acrValues(acrParams)
             .build();
         return authReq.toURI();
     }
@@ -262,7 +292,7 @@ public class AuthClient {
      * Markers for the different environments of Schibsted account.
      */
     public enum Environment {
-        DEV, PRE, PRO, PRO_NO
+        DEV, PRE, PRO, PRO_NO, PRO_FI, PRO_DK
     }
 
     /**

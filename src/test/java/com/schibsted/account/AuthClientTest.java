@@ -10,6 +10,7 @@ import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.util.URLUtils;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
+import com.nimbusds.openid.connect.sdk.claims.ACR;
 import com.nimbusds.openid.connect.sdk.token.OIDCTokens;
 import com.schibsted.account.introspection.IntrospectionResult;
 import com.schibsted.account.testutil.HttpHelper;
@@ -33,6 +34,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static com.schibsted.account.util.Helpers.toInstant;
 import static org.junit.Assert.assertEquals;
@@ -73,6 +75,30 @@ public class AuthClientTest {
             nonce,
             String.join("+", scopes),
             redirectUri
+        );
+        // make sure the redirect URI is properly URL encoded
+        assertTrue(loginUrl.contains(URLEncoder.encode(redirectUri, "utf-8")));
+        assertEquals(URLUtils.parseParameters(expectedParams), URLUtils.parseParameters(new URL(loginUrl).getQuery()));
+    }
+
+    @Test
+    public void getLoginURLWithACR() throws Exception {
+        Collection<String> scopes = Arrays.asList("openid", "scope1", "scope2");
+        String state = "test_state";
+        String nonce = "test_nonce";
+        String redirectUri = "http://client.example.com/redirect";
+        Collection<ACR> acrValues = Arrays.asList(new ACR("sms"), new ACR("pwd"));
+
+        AuthClient c = authClientBuilder().build();
+        String loginUrl = c.getLoginURL(new URI(redirectUri), state, nonce, scopes, acrValues).toString();
+        String expectedParams = String.format(
+            "response_type=code&client_id=%s&state=%s&nonce=%s&scope=%s&redirect_uri=%s&acr_values=%s",
+            TokenHelper.CLIENT_ID,
+            state,
+            nonce,
+            String.join("+", scopes),
+            redirectUri,
+            acrValues.stream().map(ACR::toString).collect(Collectors.joining("+"))
         );
         // make sure the redirect URI is properly URL encoded
         assertTrue(loginUrl.contains(URLEncoder.encode(redirectUri, "utf-8")));
