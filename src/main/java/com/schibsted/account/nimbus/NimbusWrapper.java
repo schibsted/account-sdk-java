@@ -185,7 +185,7 @@ public class NimbusWrapper {
 
         try {
             HttpResponse<String> response = request.body(httpRequest.getQuery()).asString();
-            return JSONObjectUtils.parse(response.getBody());
+            return new JSONObject(JSONObjectUtils.parse(response.getBody()));
         } catch (UnirestException | java.text.ParseException e) {
             throw new HTTPException(e);
         }
