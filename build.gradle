@@ -5,7 +5,7 @@ plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 }
 
-version '1.0.2'
+version '1.0.3'
 group 'com.schibsted.account'
 
 repositories {
@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     compile('com.konghq:unirest-java:3.10.00')
-    compile('com.nimbusds:oauth2-oidc-sdk:8.19')
+    compile('com.nimbusds:oauth2-oidc-sdk:9.35')
     compile('ch.qos.logback:logback-core:1.2.3')
     compile('ch.qos.logback:logback-classic:1.2.3')
     compile('org.slf4j:slf4j-api:1.7.25')

@@ -101,7 +101,7 @@ public class TokenHelper {
     }
 
     public static String introspectionResponse(JWTClaimsSet tokenClaims) {
-        JSONObject claims = tokenClaims.toJSONObject();
+        JSONObject claims = new JSONObject(tokenClaims.toJSONObject());
         claims.put("active", true);
         return claims.toJSONString();
     }
