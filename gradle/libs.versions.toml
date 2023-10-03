@@ -3,8 +3,8 @@
 #
 [versions]
 nexus-plugin = "1.1.0"
-slf4j-api = "1.7.25"
-logback = "1.2.3"
+slf4j-api = "2.0.9"
+logback = "1.4.11"
 konghq-unirest = "3.10.00"
 nimbusds-oauth2-oidc-sdk = "9.35"
 junit = "4.13.2"
