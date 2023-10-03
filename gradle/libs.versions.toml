@@ -1,0 +1,31 @@
+#
+# https://docs.gradle.org/current/userguide/platforms.html
+#
+[versions]
+nexus-plugin = "1.1.0"
+slf4j-api = "1.7.25"
+logback = "1.2.3"
+konghq-unirest = "3.10.00"
+nimbusds-oauth2-oidc-sdk = "9.35"
+junit = "4.12"
+mockito = { prefer = "2.+" }
+#
+[plugins]
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-plugin" }
+#
+[bundles]
+#
+[libraries]
+#
+# Api
+api-slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j-api" }
+#
+# Implementation
+impl-logback-core = { group = "ch.qos.logback", name = "logback-core", version.ref = "logback" }
+impl-logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+impl-konghq-unirest = { group = "com.konghq", name = "unirest-java", version.ref = "konghq-unirest" }
+impl-nimbusds-oauth2-oidc-sdk = { group = "com.nimbusds", name = "oauth2-oidc-sdk", version.ref = "nimbusds-oauth2-oidc-sdk" }
+#
+# Test
+test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+test-mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
