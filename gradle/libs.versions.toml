@@ -7,7 +7,7 @@ slf4j-api = "1.7.25"
 logback = "1.2.3"
 konghq-unirest = "3.10.00"
 nimbusds-oauth2-oidc-sdk = "9.35"
-junit = "4.12"
+junit = "4.13.2"
 mockito = { prefer = "2.+" }
 #
 [plugins]
