@@ -13,13 +13,23 @@ import com.schibsted.account.util.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Additional checks of claims in an ID Token.
  */
 public class IDTokenVerifier extends DefaultJWTClaimsVerifier<IDTokenSecurityContext> {
+
+    private static final Set<String> REQUIRED_CLAIMS =
+            new HashSet<>(Arrays.asList("exp", "aud"));
     private static final Logger logger = LoggerFactory.getLogger(IDTokenVerifier.class);
+
+    public IDTokenVerifier() {
+        super(null, REQUIRED_CLAIMS);
+    }
 
     /**
      * {@inheritDoc}

@@ -1,12 +1,15 @@
 # Developer documentation
 
 ## Building
+
 The SDK is built using Gradle:
+
 ```bash
 ./gradlew clean build
 ```
 
 ## Releasing
+
 Currently a release of the SDK is triggered manually:
 
 1. Make sure all changes to be included in the release have been merged into the `master` branch.
@@ -17,4 +20,3 @@ Currently a release of the SDK is triggered manually:
    CHANGELOG in the release description.
 1. When the tag is created it will trigger Travis to run all tests, build the new artifacts and publish them to
    Artifactory, as well as updating the published JavaDocs. 
-

@@ -4,85 +4,102 @@
  */
 package com.schibsted.account.introspection;
 
+import com.nimbusds.jose.util.Base64;
 import com.nimbusds.oauth2.sdk.TokenIntrospectionRequest;
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
 import com.nimbusds.oauth2.sdk.auth.Secret;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.schibsted.account.ClientCredentials;
-import com.schibsted.account.testutil.HttpHelper;
 import com.schibsted.account.testutil.TokenHelper;
-import kong.unirest.Config;
-import kong.unirest.Unirest;
-import kong.unirest.apache.ApacheClient;
-import org.apache.http.client.HttpClient;
+import kong.unirest.HttpMethod;
+import kong.unirest.MockClient;
+import org.apache.http.HttpHeaders;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
 import java.net.URI;
 
-import static com.schibsted.account.testutil.HttpHelper.matchesExpectedRequest;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class TokenIntrospectorRemoteTest {
-    @Mock
-    private HttpClient httpClient;
 
     private static final ClientCredentials CLIENT_CREDENTIALS = new ClientCredentials("client1", "secret1");
 
     private static URI introspectionEndpoint;
     private TokenIntrospectorRemote introspector;
 
+    private MockClient mock;
+
+    public TokenIntrospectorRemoteTest() {
+    }
+
     @Before
     public void setup() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        Unirest.config().httpClient(new ApacheClient(httpClient, new Config()));
+        mock = MockClient.register();
         introspectionEndpoint = new URI("https://issuer.example.com/introspect");
         introspector = new TokenIntrospectorRemote(introspectionEndpoint, CLIENT_CREDENTIALS);
     }
 
-    @Test
-    public void introspectTokenShouldVerifyValidAccessToken() throws Exception {
-        String introspectionResponse = TokenHelper.introspectionResponse(TokenHelper.accessTokenClaimsBuilder().build());
-        // introspection response for valid token
-        when(httpClient.execute(any())).thenReturn(HttpHelper.httpResponseMock(introspectionResponse));
+    @After
+    public void teardown() {
+        mock.verifyAll();
+        mock.close();
+        MockClient.clear();
+    }
 
+
+    @Test
+    public void introspectTokenShouldVerifyValidAccessToken() {
+        String introspectionResponse = TokenHelper.introspectionResponse(TokenHelper.accessTokenClaimsBuilder().build());
         String token = "test_token";
-        assertTrue(introspector.introspectToken(token).isActive());
         TokenIntrospectionRequest expectedRequest = new TokenIntrospectionRequest(
             introspectionEndpoint,
             new ClientSecretBasic(new ClientID(CLIENT_CREDENTIALS.getClientID()),
                 new Secret(CLIENT_CREDENTIALS.getClientSecret())),
             new BearerAccessToken(token));
-        verify(httpClient).execute(argThat(matchesExpectedRequest(expectedRequest)));
+        HTTPRequest request = expectedRequest.toHTTPRequest();
+
+        mock.expect(HttpMethod.POST, introspectionEndpoint.toString())
+            .header(HttpHeaders.AUTHORIZATION, request.getAuthorization())
+            .thenReturn(introspectionResponse);
+
+        IntrospectionResult result = introspector.introspectToken(token);
+        assertTrue(result.isActive());
     }
 
     @Test
-    public void introspectTokenShouldReturnNullWhenIntrospectionRequestFails() throws Exception {
+    public void introspectTokenShouldReturnNullWhenIntrospectionRequestFails() {
         // error during introspection request
-        when(httpClient.execute(any())).thenThrow(new IOException("Token introspection failed (test)"));
+        mock.expect(HttpMethod.POST, introspectionEndpoint.toString())
+            .thenReturn("");
+
         assertNull(introspector.introspectToken("test_token"));
     }
 
     @Test
-    public void introspectTokenShouldReturnNullWhenIntrospectionResponseHasUnexpectedHttpStatusCode() throws Exception {
+    public void introspectTokenShouldReturnNullWhenIntrospectionResponseHasUnexpectedHttpStatusCode() {
         // failed introspection request
-        when(httpClient.execute(any())).thenReturn(HttpHelper.httpResponseMock(400, "Bad request"));
+        mock.expect(HttpMethod.POST, introspectionEndpoint.toString())
+            .header(HttpHeaders.AUTHORIZATION,
+                "Basic " + Base64.encode(CLIENT_CREDENTIALS.getClientID() + ":" + CLIENT_CREDENTIALS.getClientSecret())
+            )
+            .thenReturn("Bad Request")
+            .withStatus(400);
         assertNull(introspector.introspectToken("test_token"));
     }
 
     @Test
-    public void introspectTokenShouldReturnNullWhenIntrospectionIsMalformed() throws Exception {
+    public void introspectTokenShouldReturnNullWhenIntrospectionIsMalformed() {
         // malformed introspection response
-        when(httpClient.execute(any())).thenReturn(HttpHelper.httpResponseMock(200, "Not JSON"));
+        mock.expect(HttpMethod.POST, "https://issuer.example.com/introspect")
+            .header(HttpHeaders.AUTHORIZATION,
+                "Basic " + Base64.encode(CLIENT_CREDENTIALS.getClientID() + ":" + CLIENT_CREDENTIALS.getClientSecret())
+            )
+            .thenReturn("Not Json");
         assertNull(introspector.introspectToken("test_token"));
     }
 }

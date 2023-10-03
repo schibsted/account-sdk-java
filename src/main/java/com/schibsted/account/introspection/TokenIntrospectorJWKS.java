@@ -6,6 +6,7 @@ package com.schibsted.account.introspection;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
 import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
@@ -14,7 +15,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.schibsted.account.nimbus.UnirestRemoteJWKSet;
+import com.schibsted.account.nimbus.UnirestResourceRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +31,11 @@ public class TokenIntrospectorJWKS implements TokenIntrospector {
     private final DefaultJWTProcessor<SimpleSecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
 
     public TokenIntrospectorJWKS(URL jwksEndpoint) {
-        JWSKeySelector<SimpleSecurityContext> keySelector = new JWSVerificationKeySelector<>(JWSAlgorithm.RS256,
-            new UnirestRemoteJWKSet<SimpleSecurityContext>(jwksEndpoint));
+        JWSKeySelector<SimpleSecurityContext> keySelector = new JWSVerificationKeySelector<>(
+            JWSAlgorithm.RS256,
+            JWKSourceBuilder.<SimpleSecurityContext>create(jwksEndpoint, new UnirestResourceRetriever())
+                .build()
+        );
         jwtProcessor.setJWSKeySelector(keySelector);
     }
 

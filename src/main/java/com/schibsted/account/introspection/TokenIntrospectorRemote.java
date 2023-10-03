@@ -62,7 +62,8 @@ public class TokenIntrospectorRemote implements TokenIntrospector {
         }
 
         try {
-            JWTClaimsSet claims = JWTClaimsSet.parse(response.getBody());
+            String body = response.getBody();
+            JWTClaimsSet claims = JWTClaimsSet.parse(body != null ? body : "");
             boolean active = false;
             if (claims.getBooleanClaim("active") != null) {
                 active = claims.getBooleanClaim("active");
