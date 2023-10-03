@@ -24,6 +24,7 @@ dependencies {
 
     implementation(libs.test.junit)
     implementation(libs.test.mockito)
+    implementation(libs.test.mock.unirest)
 }
 
 java {
@@ -32,7 +33,14 @@ java {
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+
 }
+
+tasks
+    .withType<JavaCompile>()
+    .configureEach {
+        options.isDeprecation = true
+    }
 
 tasks.test {
     addTestListener(

@@ -13,18 +13,14 @@ import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
 import com.nimbusds.openid.connect.sdk.claims.ACR;
 import com.nimbusds.openid.connect.sdk.token.OIDCTokens;
 import com.schibsted.account.introspection.IntrospectionResult;
-import com.schibsted.account.testutil.HttpHelper;
 import com.schibsted.account.testutil.TokenHelper;
 import com.schibsted.account.token.IDToken;
 import com.schibsted.account.token.UserTokens;
-import kong.unirest.Config;
-import kong.unirest.Unirest;
-import kong.unirest.apache.ApacheClient;
-import org.apache.http.client.HttpClient;
+import kong.unirest.HttpMethod;
+import kong.unirest.MockClient;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.net.URI;
@@ -39,24 +35,32 @@ import java.util.stream.Collectors;
 import static com.schibsted.account.util.Helpers.toInstant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 public class AuthClientTest {
-    @Mock
-    private HttpClient httpClient;
+
+    private MockClient mock;
+    private URI serverUri = URI.create(TokenHelper.ISSUER);
+    private URI expectedJwksEndpoint = serverUri.resolve("/oauth/jwks");
+    private URI expectedIntrospectEndpoint = serverUri.resolve("/oauth/introspect");
+    private URI expectedTokenEndpoint = serverUri.resolve("/oauth/token");
 
     private AuthClient.Builder authClientBuilder() {
         return new AuthClient.Builder(
             new ClientCredentials(TokenHelper.CLIENT_ID, "bar"),
-            URI.create(TokenHelper.ISSUER)
+            serverUri
         );
     }
 
     @Before
     public void setup() throws URISyntaxException {
-        MockitoAnnotations.initMocks(this);
-        Unirest.config().httpClient(new ApacheClient(httpClient, new Config()));
+        mock = MockClient.register();
+    }
+
+    @After
+    public void teardown() throws Exception {
+        mock.verifyAll();
+        mock.close();
+        MockClient.clear();
     }
 
     @Test
@@ -109,7 +113,9 @@ public class AuthClientTest {
     public void remoteAccessTokenValidation() throws IOException, URISyntaxException {
         JWTClaimsSet tokenClaims = TokenHelper.accessTokenClaimsBuilder().build();
         // introspection response
-        when(httpClient.execute(any())).thenReturn(HttpHelper.httpResponseMock(TokenHelper.introspectionResponse(tokenClaims)));
+        mock.expect(HttpMethod.POST, expectedIntrospectEndpoint.toString())
+            .thenReturn(TokenHelper.introspectionResponse(tokenClaims));
+
         IntrospectionResult expected = new IntrospectionResult(true, tokenClaims);
         AuthClient client = authClientBuilder()
             .withRemoteTokenIntrospection()
@@ -123,7 +129,8 @@ public class AuthClientTest {
     @Test
     public void localAccessTokenValidation() throws Exception {
         // JWKS response
-        when(httpClient.execute(any())).thenReturn(HttpHelper.httpResponseMock(TokenHelper.jwks().toString()));
+        mock.expect(HttpMethod.GET, expectedJwksEndpoint.toString())
+            .thenReturn(TokenHelper.jwks().toString());
 
         AuthClient client = authClientBuilder()
             .withLocalTokenIntrospection()
@@ -149,10 +156,10 @@ public class AuthClientTest {
             new BearerAccessToken(10, new Scope("test_scope")),
             new RefreshToken())
         );
-        when(httpClient.execute(any())).thenReturn(
-            HttpHelper.httpResponseMock(tokenResponse.toHTTPResponse().getContent()), // token response
-            HttpHelper.httpResponseMock(TokenHelper.jwks().toString()) // jwks response for verifying ID Token
-        );
+        mock.expect(HttpMethod.GET, expectedJwksEndpoint.toString())
+            .thenReturn(TokenHelper.jwks().toString());
+        mock.expect(HttpMethod.POST, expectedTokenEndpoint.toString())
+            .thenReturn(tokenResponse.toHTTPResponse().getBody());
 
         AuthClient client = authClientBuilder().build();
         UserTokens tokens = client.authorizationCodeGrant("test_code", new URI(""), nonce);

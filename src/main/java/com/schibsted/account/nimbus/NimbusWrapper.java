@@ -184,8 +184,15 @@ public class NimbusWrapper {
         }
 
         try {
-            HttpResponse<String> response = request.body(httpRequest.getQuery()).asString();
-            return new JSONObject(JSONObjectUtils.parse(response.getBody()));
+            // Rewritten due to usage of deprecated API
+            boolean isPost = HTTPRequest.Method.POST.equals(httpRequest.getMethod());
+            String body = isPost ? httpRequest.getBody() : httpRequest.getURL().getQuery();
+            HttpResponse<String> response = request.body(body).asString();
+
+            String responseBody = response.getBody();
+            Map<String, Object> parsedBody = JSONObjectUtils.parse(responseBody != null ? responseBody : "");
+
+            return new JSONObject(parsedBody);
         } catch (UnirestException | java.text.ParseException e) {
             throw new HTTPException(e);
         }

@@ -7,7 +7,7 @@ nexus-plugin = "1.1.0"
 # Main
 slf4j-api = "2.0.9"
 logback = "1.4.11"
-konghq-unirest = "3.10.00"
+konghq-unirest = "3.14.5"
 nimbusds-oauth2-oidc-sdk = "11.0"
 # Test
 junit = "4.13.2"
@@ -33,3 +33,4 @@ impl-nimbusds-oauth2-oidc-sdk = { group = "com.nimbusds", name = "oauth2-oidc-sd
 # Test
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
 test-mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+test-mock-unirest = { group = "com.konghq", name = "unirest-mocks", version.ref = "konghq-unirest" }
