@@ -6,6 +6,7 @@ package com.schibsted.account.nimbus;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
 import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
@@ -61,9 +62,13 @@ public class NimbusWrapper {
         this.tokenEndpoint = tokenEndpoint;
         this.idTokenProcessor = new DefaultJWTProcessor<>();
         this.idTokenProcessor.setJWTClaimsSetVerifier(new IDTokenVerifier());
-        JWSKeySelector<IDTokenSecurityContext> keySelector = new JWSVerificationKeySelector<>(JWSAlgorithm.RS256,
-            new UnirestRemoteJWKSet<>(jwksEndpoint));
+        JWSKeySelector<IDTokenSecurityContext> keySelector = new JWSVerificationKeySelector<>(
+            JWSAlgorithm.RS256,
+            JWKSourceBuilder.<IDTokenSecurityContext>create(jwksEndpoint, new UnirestResourceRetriever())
+                .build()
+        );
         this.idTokenProcessor.setJWSKeySelector(keySelector);
+
     }
 
     /**
