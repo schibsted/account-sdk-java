@@ -23,14 +23,13 @@ import java.util.Set;
  */
 public class IDTokenVerifier extends DefaultJWTClaimsVerifier<IDTokenSecurityContext> {
 
+    private static final Set<String> REQUIRED_CLAIMS =
+            new HashSet<>(Arrays.asList("exp", "aud"));
+    private static final Logger logger = LoggerFactory.getLogger(IDTokenVerifier.class);
+
     public IDTokenVerifier() {
         super(null, REQUIRED_CLAIMS);
     }
-
-
-    private static final Set<String> REQUIRED_CLAIMS =
-        new HashSet<String>(Arrays.asList("exp", "aud"));
-    private static final Logger logger = LoggerFactory.getLogger(IDTokenVerifier.class);
 
     /**
      * {@inheritDoc}

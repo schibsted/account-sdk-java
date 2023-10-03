@@ -30,7 +30,7 @@ public class TokenIntrospectorJWKSTest {
     }
 
     @After
-    public void teardown() throws Exception {
+    public void teardown() {
         mock.verifyAll();
         mock.close();
         MockClient.clear();
@@ -61,7 +61,7 @@ public class TokenIntrospectorJWKSTest {
     }
 
     @Test
-    public void introspectTokenShouldReturnNullForNonJWTToken() throws Exception {
+    public void introspectTokenShouldReturnNullForNonJWTToken() {
         assertNull(introspector.introspectToken("foobar"));
     }
 

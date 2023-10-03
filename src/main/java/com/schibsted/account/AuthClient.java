@@ -46,13 +46,13 @@ public class AuthClient {
     private static final String OAUTH_JWKS_ENDPOINT = "/oauth/jwks";
     private static final String OAUTH_AUTHENTICATION_ENDPOINT = "/oauth/authorize";
     private static final Map<Environment, URI> environmentURIs = Collections.unmodifiableMap(Stream.of(
-        new AbstractMap.SimpleEntry<>(Environment.DEV, URI.create("https://identity-dev.schibsted.com")),
-        new AbstractMap.SimpleEntry<>(Environment.PRE, URI.create("https://identity-pre.schibsted.com")),
-        new AbstractMap.SimpleEntry<>(Environment.PRO, URI.create("https://login.schibsted.com")),
-        new AbstractMap.SimpleEntry<>(Environment.PRO_NO, URI.create("https://payment.schibsted.no")),
-        new AbstractMap.SimpleEntry<>(Environment.PRO_FI, URI.create("https://login.schibsted.fi")),
-        new AbstractMap.SimpleEntry<>(Environment.PRO_DK, URI.create("https://login.schibsted.dk"))
-        ).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
+            new AbstractMap.SimpleEntry<>(Environment.DEV, URI.create("https://identity-dev.schibsted.com")),
+            new AbstractMap.SimpleEntry<>(Environment.PRE, URI.create("https://identity-pre.schibsted.com")),
+            new AbstractMap.SimpleEntry<>(Environment.PRO, URI.create("https://login.schibsted.com")),
+            new AbstractMap.SimpleEntry<>(Environment.PRO_NO, URI.create("https://payment.schibsted.no")),
+            new AbstractMap.SimpleEntry<>(Environment.PRO_FI, URI.create("https://login.schibsted.fi")),
+            new AbstractMap.SimpleEntry<>(Environment.PRO_DK, URI.create("https://login.schibsted.dk"))
+        ).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue))
     );
 
     static {
@@ -62,8 +62,8 @@ public class AuthClient {
     private final URI serverAddress;
     private final String issuer;
     private final NimbusWrapper nimbus;
-    private ClientCredentials clientCredentials;
-    private TokenValidator tokenValidator;
+    private final ClientCredentials clientCredentials;
+    private final TokenValidator tokenValidator;
 
     private AuthClient(URI serverAddress, URL jwksURL, ClientCredentials clientCredentials, TokenValidator tokenValidator) {
         this.serverAddress = serverAddress;
@@ -224,7 +224,7 @@ public class AuthClient {
         }
 
         List<ACR> acrParams = (acrValues != null) ?
-            acrValues.stream().collect(Collectors.toList()) : null;
+                new ArrayList<>(acrValues) : null;
 
         AuthenticationRequest authReq = new AuthenticationRequest.Builder(
             new ResponseType(ResponseType.Value.CODE),

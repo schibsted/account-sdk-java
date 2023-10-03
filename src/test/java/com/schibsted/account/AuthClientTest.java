@@ -22,9 +22,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -39,10 +37,10 @@ import static org.junit.Assert.assertTrue;
 public class AuthClientTest {
 
     private MockClient mock;
-    private URI serverUri = URI.create(TokenHelper.ISSUER);
-    private URI expectedJwksEndpoint = serverUri.resolve("/oauth/jwks");
-    private URI expectedIntrospectEndpoint = serverUri.resolve("/oauth/introspect");
-    private URI expectedTokenEndpoint = serverUri.resolve("/oauth/token");
+    private final URI serverUri = URI.create(TokenHelper.ISSUER);
+    private final URI expectedJwksEndpoint = serverUri.resolve("/oauth/jwks");
+    private final URI expectedIntrospectEndpoint = serverUri.resolve("/oauth/introspect");
+    private final URI expectedTokenEndpoint = serverUri.resolve("/oauth/token");
 
     private AuthClient.Builder authClientBuilder() {
         return new AuthClient.Builder(
@@ -52,12 +50,12 @@ public class AuthClientTest {
     }
 
     @Before
-    public void setup() throws URISyntaxException {
+    public void setup() {
         mock = MockClient.register();
     }
 
     @After
-    public void teardown() throws Exception {
+    public void teardown() {
         mock.verifyAll();
         mock.close();
         MockClient.clear();
@@ -110,7 +108,7 @@ public class AuthClientTest {
     }
 
     @Test
-    public void remoteAccessTokenValidation() throws IOException, URISyntaxException {
+    public void remoteAccessTokenValidation() {
         JWTClaimsSet tokenClaims = TokenHelper.accessTokenClaimsBuilder().build();
         // introspection response
         mock.expect(HttpMethod.POST, expectedIntrospectEndpoint.toString())
@@ -141,7 +139,7 @@ public class AuthClientTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void clientNotConfiguredForIntrospectionFailsWithException() throws URISyntaxException {
+    public void clientNotConfiguredForIntrospectionFailsWithException() {
         authClientBuilder()
             .build()
             .validateAccessToken("foo", TokenHelper.SCOPES, TokenHelper.CLIENT_ID);

@@ -70,9 +70,7 @@ public class UnirestResourceRetrieverTest {
         // when / then
         Assert.assertThrows(
             IOException.class,
-            () -> {
-                underTest.retrieveResource(url);
-            }
+            () -> underTest.retrieveResource(url)
         );
     }
 }

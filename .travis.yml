@@ -1,44 +1,44 @@
 dist: bionic
 language: java
 jdk:
-  - openjdk8
+    - openjdk8
 
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+    - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+    - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+    directories:
+        - $HOME/.gradle/caches/
+        - $HOME/.gradle/wrapper/
 
 env:
-  global:
-    - ORG_GRADLE_PROJECT_sonatypeUsername=samuelg
-    # Encrypted ORG_GRADLE_PROJECT_sonatypePassword
-    - secure: "OBdadNWyzpOjj+A8NTefWCZGV6g/W6S1tl0A12qC68WGmTdD1V1ixbZvqVxAx61ghWSd71WY4JqYw+2xdZRhI99XwaZ66qLQofgRpeV/SegzpJgX0myE7qbti/PJeNgInn5+bcQfpHBi9lR0PnOyV5cMbse46mC0HZ82uPnHqUp2ihJEul9Q9+W1uF13L9zBIl5zv5fxw/XaW62g4PZzjRU9ZAt7UWOhvq6BBoKp0SwteoRh9zBVg2VBeJYXudn4jXY1XLiXJxZF4u+SLkQa4nPenLXhJ3hMkKTvaGU+3LV5vxAMpHL6l7GNYyihZQEsnIkltduXp75UmR6gk3X0z2YCXA587Z5TuFljYSe9SHv9itxNoz2W6nt2Tbxy+nGccqtit1M30aV7U7PDQ0B67MyjKKKLaOxmkzqkR2Vwnj5KfI2FAKI/51uW5a6I8RXmR7aIlwKYReKVmX/lFRyrOccvegJvbVnvZh5aN4fGoH7wPlU4qbe0d4hDYu92iZagSbBfoSFtGAHWvRxSTQATMR5GWoLAUUUSF97QmY9k/EHwZP4IPcdmSxGsnpjWwfhaut4GZMa+5LY+BNmHLd6l0LI5ZUBdYclKetLPFIEKCcIO6kDLzFOY9s7570jiAb7DZC0d7rhq6+EN6Bw8tkMKnHmJ+USPziABGG4mm2fkcjU="
-    # Encrypted SIGNING_PASSWORD (encrypted SIGNING_KEY, Base64 encoded, is set in Travis environment variables)
-    - secure: "kiyNJ4seS65DZ3+wn12nJStDMbvHv/JZOtRxzx9cnjvO8RUk9Pr0xo5MdAiKo7ad+fgsAYXQubq5P6vdEh/S7syXMcZKVKE8anCzxG4ESlAXFbNyegdImfetfTUM7URbCPXvUcrgSfpkbj5C0s7Lontc5Iy+RaYSa5YD7FAweMkm6QDLtAjq9Kw4pL67Uz3WFkrqxMEhhNcJusM/4RFvhTBdwSCHB5PuYDzwcqACIJlcYPed4g+Psq7NTqbdxQHH3mG6h/nT21hKbkKkFztwULOYbQHTELf7ZHDRESUWP+wobMB4wrwK5Xc505cB1fVwgDrc4k9lPoofKWK7wBm2x+H5ZNclnPQ+b1tqjo5E90xM7peJgt+kYfM3ADPM2RmIM+UJ9ctNH2tvub2YaBTY7KBcs3YnxbBlJzXJEF73BhOwQlL7VIxgoKL6XqH/EvLOaIsrOTZGMWmbnCkMSLf1Xwx0kKHxOWRkrWyD+t0LPOatNtjYF7GFFXgRFyInlijmdzFKCxVClgmTPGhVRbO5GOTtkpk6hLP6Lbr2Ji8lmxclw5VHwQJta1rBh4NnHWOy6/xwR30c774rvvOu/ARnJF1hRRH8FlAHr6RYMFhvkvMETr71/3wXKGQJkt9gkah44Xp2/QHv879BKoGXrcBJuJ7+Au3uztyeyPlbd2o5UqQ="
-    # Encrypted GH_PAGES_TOKEN
-    - secure: "ENw/HcUGIy/XUnwTPobm/pH0P1Kzls2+qGHqpuTiM+C9RuZ5FY544eJXo+qS972+yJMSAuFxr31u212WlYtWc7gFht5u+qpPIMe9dFvk0vgV+oIUnvS5fB7eKiiayqO4lxKcVYObf3O+HpXXnUAmQWhyXkyXvmfQWwgNgT1Y9gVqY+tJCmDoqmL6Hc15I/IYKhhL+JM0H8LxmiI/iXoUsdWe1Un2PXWE9dQGbRBifprLVvmDC0SlYS5liDwjINGPi49fvdci4kNNOiTQEQlXuLrC6ygBHVDCw9QxWupOLny6LfDqxYlT8eW/CfD2Z27ebPHSe/0Boqc66Fixw8I1k1ABEFK4HAQ7lZ26zwYBUkoKL01hW/Tdm4gjoysnUD/VEzAD5ieIyJo6vd+zGmMxhqlWKkaNV+jfbr6fa3tVeDkv0/hBLg7wCV5SpwgYBwhsJmOQer/cRduI+RIynxHY7kAJifRHEeteDc6x6HnmrmmoUnflsWt9V2uw0CWR7gbdD0qJJx4SHm18yFdMeel5x9TjVLYWL1IOU+1oJWUtyOavqjU+6OT/SHQ7eA7E4PjnWIJj5QLsusnABtAIY7MeXE72JsWmoAZPtggSz05qn/sESboYMOmQB5BlGcgR7B3Dk5ZmHsg8diOJVc3R41wh15gfve0sj/j7vZ+ifmnPYc8="
+    global:
+        - ORG_GRADLE_PROJECT_sonatypeUsername=samuelg
+        # Encrypted ORG_GRADLE_PROJECT_sonatypePassword
+        -   secure: "OBdadNWyzpOjj+A8NTefWCZGV6g/W6S1tl0A12qC68WGmTdD1V1ixbZvqVxAx61ghWSd71WY4JqYw+2xdZRhI99XwaZ66qLQofgRpeV/SegzpJgX0myE7qbti/PJeNgInn5+bcQfpHBi9lR0PnOyV5cMbse46mC0HZ82uPnHqUp2ihJEul9Q9+W1uF13L9zBIl5zv5fxw/XaW62g4PZzjRU9ZAt7UWOhvq6BBoKp0SwteoRh9zBVg2VBeJYXudn4jXY1XLiXJxZF4u+SLkQa4nPenLXhJ3hMkKTvaGU+3LV5vxAMpHL6l7GNYyihZQEsnIkltduXp75UmR6gk3X0z2YCXA587Z5TuFljYSe9SHv9itxNoz2W6nt2Tbxy+nGccqtit1M30aV7U7PDQ0B67MyjKKKLaOxmkzqkR2Vwnj5KfI2FAKI/51uW5a6I8RXmR7aIlwKYReKVmX/lFRyrOccvegJvbVnvZh5aN4fGoH7wPlU4qbe0d4hDYu92iZagSbBfoSFtGAHWvRxSTQATMR5GWoLAUUUSF97QmY9k/EHwZP4IPcdmSxGsnpjWwfhaut4GZMa+5LY+BNmHLd6l0LI5ZUBdYclKetLPFIEKCcIO6kDLzFOY9s7570jiAb7DZC0d7rhq6+EN6Bw8tkMKnHmJ+USPziABGG4mm2fkcjU="
+        # Encrypted SIGNING_PASSWORD (encrypted SIGNING_KEY, Base64 encoded, is set in Travis environment variables)
+        -   secure: "kiyNJ4seS65DZ3+wn12nJStDMbvHv/JZOtRxzx9cnjvO8RUk9Pr0xo5MdAiKo7ad+fgsAYXQubq5P6vdEh/S7syXMcZKVKE8anCzxG4ESlAXFbNyegdImfetfTUM7URbCPXvUcrgSfpkbj5C0s7Lontc5Iy+RaYSa5YD7FAweMkm6QDLtAjq9Kw4pL67Uz3WFkrqxMEhhNcJusM/4RFvhTBdwSCHB5PuYDzwcqACIJlcYPed4g+Psq7NTqbdxQHH3mG6h/nT21hKbkKkFztwULOYbQHTELf7ZHDRESUWP+wobMB4wrwK5Xc505cB1fVwgDrc4k9lPoofKWK7wBm2x+H5ZNclnPQ+b1tqjo5E90xM7peJgt+kYfM3ADPM2RmIM+UJ9ctNH2tvub2YaBTY7KBcs3YnxbBlJzXJEF73BhOwQlL7VIxgoKL6XqH/EvLOaIsrOTZGMWmbnCkMSLf1Xwx0kKHxOWRkrWyD+t0LPOatNtjYF7GFFXgRFyInlijmdzFKCxVClgmTPGhVRbO5GOTtkpk6hLP6Lbr2Ji8lmxclw5VHwQJta1rBh4NnHWOy6/xwR30c774rvvOu/ARnJF1hRRH8FlAHr6RYMFhvkvMETr71/3wXKGQJkt9gkah44Xp2/QHv879BKoGXrcBJuJ7+Au3uztyeyPlbd2o5UqQ="
+        # Encrypted GH_PAGES_TOKEN
+        -   secure: "ENw/HcUGIy/XUnwTPobm/pH0P1Kzls2+qGHqpuTiM+C9RuZ5FY544eJXo+qS972+yJMSAuFxr31u212WlYtWc7gFht5u+qpPIMe9dFvk0vgV+oIUnvS5fB7eKiiayqO4lxKcVYObf3O+HpXXnUAmQWhyXkyXvmfQWwgNgT1Y9gVqY+tJCmDoqmL6Hc15I/IYKhhL+JM0H8LxmiI/iXoUsdWe1Un2PXWE9dQGbRBifprLVvmDC0SlYS5liDwjINGPi49fvdci4kNNOiTQEQlXuLrC6ygBHVDCw9QxWupOLny6LfDqxYlT8eW/CfD2Z27ebPHSe/0Boqc66Fixw8I1k1ABEFK4HAQ7lZ26zwYBUkoKL01hW/Tdm4gjoysnUD/VEzAD5ieIyJo6vd+zGmMxhqlWKkaNV+jfbr6fa3tVeDkv0/hBLg7wCV5SpwgYBwhsJmOQer/cRduI+RIynxHY7kAJifRHEeteDc6x6HnmrmmoUnflsWt9V2uw0CWR7gbdD0qJJx4SHm18yFdMeel5x9TjVLYWL1IOU+1oJWUtyOavqjU+6OT/SHQ7eA7E4PjnWIJj5QLsusnABtAIY7MeXE72JsWmoAZPtggSz05qn/sESboYMOmQB5BlGcgR7B3Dk5ZmHsg8diOJVc3R41wh15gfve0sj/j7vZ+ifmnPYc8="
 
 script:
-  - ./gradlew clean build
+    - ./gradlew clean build
 
 before_deploy: ./gradlew javadoc
 
 deploy:
-  - provider: script
-    script: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
-    skip_cleanup: true
-    on:
-      repo: schibsted/account-sdk-java
-      tags: true
+    -   provider: script
+        script: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+        skip_cleanup: true
+        on:
+            repo: schibsted/account-sdk-java
+            tags: true
 
-  - provider: pages
-    skip_cleanup: true
-    github_token: $GH_PAGES_TOKEN
-    keep_history: true
-    local_dir: build/docs/javadoc/
-    on:
-      repo: schibsted/account-sdk-java
-      tags: true
+    -   provider: pages
+        skip_cleanup: true
+        github_token: $GH_PAGES_TOKEN
+        keep_history: true
+        local_dir: build/docs/javadoc/
+        on:
+            repo: schibsted/account-sdk-java
+            tags: true

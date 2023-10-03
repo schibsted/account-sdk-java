@@ -58,7 +58,7 @@ public class NimbusWrapperTest {
     }
 
     @After
-    public void teardown() throws Exception {
+    public void teardown() {
         mock.verifyAll();
         mock.close();
         MockClient.clear();

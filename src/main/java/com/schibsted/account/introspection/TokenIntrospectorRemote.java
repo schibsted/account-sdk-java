@@ -5,7 +5,6 @@
 package com.schibsted.account.introspection;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.openid.connect.sdk.claims.ClaimsSet;
 import com.schibsted.account.ClientCredentials;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.text.ParseException;
-import java.util.HashMap;
 
 /**
  * {@code TokenIntrospectorRemote} validates a JWT token via a token introspection request.
