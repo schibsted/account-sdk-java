@@ -8,7 +8,7 @@ logback = "1.2.3"
 konghq-unirest = "3.10.00"
 nimbusds-oauth2-oidc-sdk = "9.35"
 junit = "4.13.2"
-mockito = { prefer = "2.+" }
+mockito = { prefer = "5.+" }
 #
 [plugins]
 nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-plugin" }
