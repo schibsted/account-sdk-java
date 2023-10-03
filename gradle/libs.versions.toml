@@ -2,13 +2,17 @@
 # https://docs.gradle.org/current/userguide/platforms.html
 #
 [versions]
+# Plugins
 nexus-plugin = "1.1.0"
+# Main
 slf4j-api = "2.0.9"
 logback = "1.4.11"
 konghq-unirest = "3.10.00"
-nimbusds-oauth2-oidc-sdk = "9.35"
+nimbusds-oauth2-oidc-sdk = "11.0"
+# Test
 junit = "4.13.2"
 mockito = { prefer = "5.+" }
+#
 #
 [plugins]
 nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-plugin" }
