@@ -182,6 +182,7 @@ public class NimbusWrapper {
                 request.header(header.getKey(), value);
             }
         }
+        request.header("X-Oidc", "v1");
 
         try {
             HttpResponse<String> response = request.body(httpRequest.getQuery()).asString();
